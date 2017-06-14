@@ -13,7 +13,15 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
     fi
   done) <<< "$kak_buflist"
   echo ^
-} }
+}}
+
+def buffer-first -docstring 'move to the first buffer in the list' 'find-buffer-by-index 1'
+
+def buffer-last -docstring 'move to the last buffer in the list' %{ %sh{
+  bs=${kak_buflist//[^:]}
+  length="${#bs}"
+  echo "find-buffer-by-index ${#bs}"
+}}
 
 def -hidden -params 1 find-buffer-by-index %{ %sh{
   index=0
@@ -23,7 +31,7 @@ def -hidden -params 1 find-buffer-by-index %{ %sh{
       echo "b $buf"
     fi
   done) <<< "$kak_buflist"
-} }
+}}
 
 # Suggested hook
 
@@ -40,4 +48,9 @@ def -hidden -params 1 find-buffer-by-index %{ %sh{
 #map global user 7 ':find-buffer-by-index 7<ret>' -docstring 'buf 7'
 #map global user 8 ':find-buffer-by-index 8<ret>' -docstring 'buf 8'
 #map global user 9 ':find-buffer-by-index 9<ret>' -docstring 'buf 9'
+
+# Suggested alias
+
+#alias global bf buffer-first
+#alias global bl buffer-last
 

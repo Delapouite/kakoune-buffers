@@ -10,6 +10,8 @@ Add `buffers.kak` to your autoload dir: `~/.config/kak/autoload/`.
 
 Run the `list-buffers` command. It will display an info box with a numbered list of opened buffers.
 
+Use `buffer-first` and `buffer-last` to move to the ends of the list.
+
 ```
 # Suggested hook
 
@@ -26,7 +28,16 @@ map global user 6 ':find-buffer-by-index 6<ret>' -docstring 'buf 6'
 map global user 7 ':find-buffer-by-index 7<ret>' -docstring 'buf 7'
 map global user 8 ':find-buffer-by-index 8<ret>' -docstring 'buf 8'
 map global user 9 ':find-buffer-by-index 9<ret>' -docstring 'buf 9'
+
+# Suggested alias
+
+alias global bf buffer-first
+alias global bl buffer-last
 ```
+
+## Screenshot
+
+![screenshot](https://raw.githubusercontent.com/delapouite/kakoune-buffers/master/screenshot.jpg)
 
 ## See also
 
