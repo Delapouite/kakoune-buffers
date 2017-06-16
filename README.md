@@ -29,7 +29,7 @@ map global user 7 ':find-buffer-by-index 7<ret>' -docstring 'buf 7'
 map global user 8 ':find-buffer-by-index 8<ret>' -docstring 'buf 8'
 map global user 9 ':find-buffer-by-index 9<ret>' -docstring 'buf 9'
 
-# Suggested alias
+# Suggested aliases
 
 alias global bf buffer-first
 alias global bl buffer-last
@@ -41,6 +41,7 @@ alias global bl buffer-last
 
 ## See also
 
+- [kakoune-cd](https://github.com/Delapouite/kakoune-cd)
 - [kakoune-registers](https://github.com/Delapouite/kakoune-registers)
 
 ## Licence

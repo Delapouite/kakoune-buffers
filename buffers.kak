@@ -49,7 +49,7 @@ def -hidden -params 1 find-buffer-by-index %{ %sh{
 #map global user 8 ':find-buffer-by-index 8<ret>' -docstring 'buf 8'
 #map global user 9 ':find-buffer-by-index 9<ret>' -docstring 'buf 9'
 
-# Suggested alias
+# Suggested aliases
 
 #alias global bf buffer-first
 #alias global bl buffer-last
