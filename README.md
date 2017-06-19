@@ -12,6 +12,8 @@ Run the `list-buffers` command. It will display an info box with a numbered list
 
 Use `buffer-first` and `buffer-last` to move to the ends of the list.
 
+To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only!` version.
+
 ```
 # Suggested hook
 
@@ -33,6 +35,40 @@ map global user 9 ':find-buffer-by-index 9<ret>' -docstring 'buf 9'
 
 alias global bf buffer-first
 alias global bl buffer-last
+alias global bo buffer-only
+alias global bo! buffer-only!
+
+# Suggested menu
+
+map global user b :mode-buffers<ret> -docstring 'buffers…'
+
+def -hidden mode-buffers %{
+  info -title 'buffers' \
+%{a: alternate
+b: list
+d: delete
+f: find
+h: first
+l: last
+o: only
+n: next
+p: previous}
+  on-key %{ %sh{
+    case $kak_key in
+      a) echo exec 'ga' ;;
+      b) echo list-buffers ;;
+      d) echo delete-buffer ;;
+      f) echo exec ':buffer<space>' ;;
+      h) echo buffer-first ;;
+      l) echo buffer-last ;;
+      o) echo buffer-only ;;
+      n) echo buffer-next ;;
+      p) echo buffer-previous ;;
+      *) echo nop ;;
+    esac
+  }}
+}
+
 ```
 
 ## Screenshot

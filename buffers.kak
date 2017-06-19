@@ -33,6 +33,22 @@ def -hidden -params 1 find-buffer-by-index %{ %sh{
   done) <<< "$kak_buflist"
 }}
 
+def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
+  (while read -d : buf; do
+    if [[ "$buf" != "$kak_bufname" ]]; then
+      echo "try 'db $buf'"
+    fi
+  done) <<< "$kak_buflist"
+}}
+
+def buffer-only! -docstring 'delete all buffers except current one' %{ %sh{
+  (while read -d : buf; do
+    if [[ "$buf" != "$kak_bufname" ]]; then
+      echo "db! $buf"
+    fi
+  done) <<< "$kak_buflist"
+}}
+
 # Suggested hook
 
 #hook global WinDisplay .* list-buffers
@@ -53,4 +69,5 @@ def -hidden -params 1 find-buffer-by-index %{ %sh{
 
 #alias global bf buffer-first
 #alias global bl buffer-last
-
+#alias global bo buffer-only
+#alias global bo! buffer-only!
