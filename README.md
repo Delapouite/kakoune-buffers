@@ -10,7 +10,9 @@ Add `buffers.kak` to your autoload dir: `~/.config/kak/autoload/`.
 
 Run the `list-buffers` command. It will display an info box with a numbered list of opened buffers.
 
-The current buffer is prefixed by a `>`. Modified buffers are suffixed by a `[+]`.
+- The current buffer is prefixed by a `>`.
+- The alt buffer is prefixed by a `#` (use `ga` to reach it).
+- Modified buffers are suffixed by a `[+]`.
 
 To jump to a specific buffer index use the `buffer-by-index n` command.
 

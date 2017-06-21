@@ -2,11 +2,21 @@
 # debug buffers (like *debug*, *lint*…) are excluded
 decl str-list buffers_info
 
+# used to handle [+] (modified) symbol in list
 def -hidden refresh-buffers-info %{
   set global buffers_info ''
   eval -no-hooks -buffer * %{
     set -add global buffers_info "%val{bufname}_%val{modified}"
   }
+}
+
+# used to handle # (alt) symbol in list
+decl str alt_bufname
+decl str current_bufname
+
+hook global WinDisplay .* %{
+  set global alt_bufname %opt{current_bufname}
+  set global current_bufname %val{bufname}
 }
 
 def list-buffers -docstring 'populate an info box with a numbered buffers list' %{
@@ -24,6 +34,8 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
       index=$(($index + 1))
       if [[ "$name" == "$kak_bufname" ]]; then
         printf "> %s" "$index - $name"
+      elif [[ "$name" == "$kak_opt_alt_bufname" ]]; then
+        printf "# %s" "$index - $name"
       else
         printf "  %s" "$index - $name"
       fi
