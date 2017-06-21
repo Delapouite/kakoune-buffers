@@ -1,36 +1,64 @@
-def list-buffers -docstring 'populate an info box with a numbered buffers list' %{ %sh{
-  bs=${kak_buflist//[^:]}
-  title="${#bs} buffers"
+# buflist++: names AND modified bool
+# debug buffers (like *debug*, *lint*…) are excluded
+decl str-list buffers_info
 
-  echo -n info -title "'" $title "'" -- %^
-  index=0
-  (while read -d : buf; do
-    index=$(($index+1))
-    if [[ "$buf" == "$kak_bufname" ]]; then
-      echo "> $index - $buf"
-    else
-      echo "  $index - $buf"
-    fi
-  done) <<< "$kak_buflist"
-  echo ^
-}}
+def -hidden refresh-buffers-info %{
+  set global buffers_info ''
+  eval -no-hooks -buffer * %{
+    set -add global buffers_info "%val{bufname}_%val{modified}"
+  }
+}
+
+def list-buffers -docstring 'populate an info box with a numbered buffers list' %{
+  refresh-buffers-info
+  %sh{
+    # title
+    buffers=${kak_opt_buffers_info//[^:]}
+    title="$((${#buffers} + 1)) buffers"
+    index=0
+
+    printf "info -title '$title' -- %%^"
+    printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' |
+    while read info; do
+      name=${info%_*}
+      index=$(($index + 1))
+      if [[ "$name" == "$kak_bufname" ]]; then
+        printf "> %s" "$index - $name"
+      else
+        printf "  %s" "$index - $name"
+      fi
+      modified=${info##*_}
+      if [ "$modified" = true ]; then
+        printf " [+]"
+      fi
+      echo
+    done
+    printf ^\\n
+  }
+}
 
 def buffer-first -docstring 'move to the first buffer in the list' 'buffer-by-index 1'
 
-def buffer-last -docstring 'move to the last buffer in the list' %{ %sh{
-  bs=${kak_buflist//[^:]}
-  length="${#bs}"
-  echo "buffer-by-index ${#bs}"
-}}
+def buffer-last -docstring 'move to the last buffer in the list' %{
+  refresh-buffers-info
+  %sh{
+    buffers=${kak_opt_buffers_info//[^:]}
+    last="$((${#buffers} + 1))"
+    echo "buffer-by-index $last"
+  }
+}
 
 def -hidden -params 1 buffer-by-index %{ %sh{
   index=0
-  (while read -d : buf; do
+
+  printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' |
+  while read info; do
+    name=${info%_*}
     index=$(($index+1))
     if [[ $index == $1 ]]; then
-      echo "b $buf"
+      echo "b $name"
     fi
-  done) <<< "$kak_buflist"
+  done
 }}
 
 def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{

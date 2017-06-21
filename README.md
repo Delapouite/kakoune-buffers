@@ -10,6 +10,8 @@ Add `buffers.kak` to your autoload dir: `~/.config/kak/autoload/`.
 
 Run the `list-buffers` command. It will display an info box with a numbered list of opened buffers.
 
+The current buffer is prefixed by a `>`. Modified buffers are suffixed by a `[+]`.
+
 To jump to a specific buffer index use the `buffer-by-index n` command.
 
 Use `buffer-first` and `buffer-last` to move to the ends of the list.
@@ -60,4 +62,5 @@ alias global bo! buffer-only!
 
 MIT
 
-Thanks a lot to @danr for the original implementation: https://gist.github.com/danr/e69a55129a3fd27f1f098d4e167afccd
+Thanks a lot to [danr](https://github.com/danr) and [occivink](https://github.com/occivink)
+for the original implementation: https://github.com/occivink/config/blob/master/.config/kak/buflist.kak
