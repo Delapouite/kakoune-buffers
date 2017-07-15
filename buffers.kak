@@ -5,6 +5,7 @@ decl str-list buffers_info
 # used to handle [+] (modified) symbol in list
 def -hidden refresh-buffers-info %{
   set global buffers_info ''
+  # iteration over all buffers
   eval -no-hooks -buffer * %{
     set -add global buffers_info "%val{bufname}_%val{modified}"
   }
@@ -13,6 +14,8 @@ def -hidden refresh-buffers-info %{
 # used to handle # (alt) symbol in list
 decl str alt_bufname
 decl str current_bufname
+# adjust this number to display more buffers in info
+decl int max_list_buffers 42
 
 hook global WinDisplay .* %{
   set global alt_bufname %opt{current_bufname}
@@ -22,7 +25,7 @@ hook global WinDisplay .* %{
 def list-buffers -docstring 'populate an info box with a numbered buffers list' %{
   refresh-buffers-info
   %sh{
-    # title
+    # info title
     buffers=${kak_opt_buffers_info//[^:]}
     title="$((${#buffers} + 1)) buffers"
     index=0
@@ -30,8 +33,14 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
     printf "info -title '$title' -- %%^"
     printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' |
     while read info; do
-      name=${info%_*}
+      # limit lists too big
       index=$(($index + 1))
+      if [ "$index" -gt "$kak_opt_max_list_buffers" ]; then
+        printf '  …'
+        break
+      fi
+
+      name=${info%_*}
       if [[ "$name" == "$kak_bufname" ]]; then
         printf "> %s" "$index - $name"
       elif [[ "$name" == "$kak_opt_alt_bufname" ]]; then
@@ -39,6 +48,7 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
       else
         printf "  %s" "$index - $name"
       fi
+
       modified=${info##*_}
       if [ "$modified" = true ]; then
         printf " [+]"

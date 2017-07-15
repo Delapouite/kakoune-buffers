@@ -14,8 +14,9 @@ Run the `list-buffers` command. It will display an info box with a numbered list
 - The alt buffer is prefixed by a `#` (use `ga` to reach it).
 - Modified buffers are suffixed by a `[+]`.
 
-To jump to a specific buffer index use the `buffer-by-index n` command.
+If this list gets too big, decrease the `max_list_buffers` option.
 
+To jump to a specific buffer index use the `buffer-by-index n` command.
 Use `buffer-first` and `buffer-last` to move to the ends of the list.
 
 To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only!` version.
