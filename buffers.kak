@@ -26,11 +26,9 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
   refresh-buffers-info
   %sh{
     # info title
-    buffers=${kak_opt_buffers_info//[^:]}
-    title="$((${#buffers} + 1)) buffers"
+    number=$(printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' | wc -l)
     index=0
-
-    printf "info -title '$title' -- %%^"
+    printf "info -title '$number buffers' -- %%^"
     printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' |
     while read info; do
       # limit lists too big
@@ -41,9 +39,9 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
       fi
 
       name=${info%_*}
-      if [[ "$name" == "$kak_bufname" ]]; then
+      if [ "$name" = "$kak_bufname" ]; then
         printf "> %s" "$index - $name"
-      elif [[ "$name" == "$kak_opt_alt_bufname" ]]; then
+      elif [ "$name" = "$kak_opt_alt_bufname" ]; then
         printf "# %s" "$index - $name"
       else
         printf "  %s" "$index - $name"
@@ -64,39 +62,39 @@ def buffer-first -docstring 'move to the first buffer in the list' 'buffer-by-in
 def buffer-last -docstring 'move to the last buffer in the list' %{
   refresh-buffers-info
   %sh{
-    buffers=${kak_opt_buffers_info//[^:]}
-    last="$((${#buffers} + 1))"
-    echo "buffer-by-index $last"
+    number=$(printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' | wc -l)
+    echo "buffer-by-index $number"
   }
 }
 
 def -hidden -params 1 buffer-by-index %{ %sh{
   index=0
 
-  printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' |
-  while read info; do
-    name=${info%_*}
+  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
+  while read buf; do
     index=$(($index+1))
-    if [[ $index == $1 ]]; then
-      echo "b $name"
+    if [ $index = $1 ]; then
+      echo "b $buf"
     fi
   done
 }}
 
 def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
-  (while read -d : buf; do
-    if [[ "$buf" != "$kak_bufname" ]]; then
+  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
+  while read buf; do
+    if [ "$buf" != "$kak_bufname" ]; then
       echo "try 'db $buf'"
     fi
-  done) <<< "$kak_buflist"
+  done
 }}
 
 def buffer-only! -docstring 'delete all buffers except current one' %{ %sh{
-  (while read -d : buf; do
-    if [[ "$buf" != "$kak_bufname" ]]; then
+  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
+  while read buf; do
+    if [ "$buf" != "$kak_bufname" ]; then
       echo "db! $buf"
     fi
-  done) <<< "$kak_buflist"
+  done
 }}
 
 def -hidden mode-buffers -params ..1 %{
@@ -112,7 +110,7 @@ n: next
 o: only
 p: previous}
   on-key %{ %sh{
-    case $kak_key in
+    case "$kak_key" in
       [1-9]) echo "buffer-by-index $kak_key" ;;
       a) echo exec 'ga' ;;
       b) echo list-buffers ;;
@@ -127,7 +125,7 @@ p: previous}
       *) echo info; esc=true ;;
     esac
     # repeat?
-    if [[ $1 = lock && $esc != true ]]; then
+    if [ "$1" = lock ] && [ "$esc" != true ]; then
       echo ';mode-buffers lock;list-buffers'
     fi
   }}
