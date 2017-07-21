@@ -1,6 +1,8 @@
 # buflist++: names AND modified bool
 # debug buffers (like *debug*, *lint*…) are excluded
-decl str-list buffers_info
+decl -hidden str-list buffers_info
+
+decl int buffers_total
 
 # used to handle [+] (modified) symbol in list
 def -hidden refresh-buffers-info %{
@@ -8,6 +10,10 @@ def -hidden refresh-buffers-info %{
   # iteration over all buffers
   eval -no-hooks -buffer * %{
     set -add global buffers_info "%val{bufname}_%val{modified}"
+  }
+  %sh{
+    total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' | wc -l)
+    printf '%s\n' "set global buffers_total $total"
   }
 }
 
@@ -26,9 +32,8 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
   refresh-buffers-info
   %sh{
     # info title
-    number=$(printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' | wc -l)
     index=0
-    printf "info -title '$number buffers' -- %%^"
+    printf "info -title '$kak_opt_buffers_total buffers' -- %%^"
     printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' |
     while read info; do
       # limit lists too big
@@ -61,10 +66,7 @@ def buffer-first -docstring 'move to the first buffer in the list' 'buffer-by-in
 
 def buffer-last -docstring 'move to the last buffer in the list' %{
   refresh-buffers-info
-  %sh{
-    number=$(printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' | wc -l)
-    echo "buffer-by-index $number"
-  }
+  buffer-by-index %opt{buffers_total}
 }
 
 def -hidden -params 1 buffer-by-index %{ %sh{
