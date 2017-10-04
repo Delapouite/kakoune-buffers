@@ -20,6 +20,7 @@ To jump to a specific buffer index use the `buffer-by-index n` command.
 Use `buffer-first` and `buffer-last` to move to the ends of the list.
 
 To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only!` version.
+You can also delete all buffers except the ones in the same dir as the current buffer with `buffer-only-directory`.
 
 All this commands are grouped in a dedicated *menu* that can be triggered with `mode-buffers`.
 

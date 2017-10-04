@@ -82,19 +82,42 @@ def -hidden -params 1 buffer-by-index %{ %sh{
 }}
 
 def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
+  deleted=0
+
   printf '%s\n' "$kak_buflist" | tr ':' '\n' |
   while read buf; do
     if [ "$buf" != "$kak_bufname" ]; then
       echo "try 'db $buf'"
+      echo "echo -markup '{Information}$deleted buffers deleted'"
+      deleted=$((deleted+1))
     fi
   done
 }}
 
 def buffer-only! -docstring 'delete all buffers except current one' %{ %sh{
+  deleted=0
+
   printf '%s\n' "$kak_buflist" | tr ':' '\n' |
   while read buf; do
     if [ "$buf" != "$kak_bufname" ]; then
       echo "db! $buf"
+      echo "echo -markup '{Information}$deleted buffers deleted'"
+      deleted=$((deleted+1))
+    fi
+  done
+}}
+
+def buffer-only-directory -docstring 'delete all saved buffers except the ones in the same current buffer directory' %{ %sh{
+  deleted=0
+  current_buffer_dir=$(dirname "$kak_bufname")
+
+  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
+  while read buf; do
+    dir=$(dirname "$buf")
+    if [ $dir != "$current_buffer_dir" ]; then
+      echo "try 'db $buf'"
+      echo "echo -markup '{Information}$deleted buffers deleted'"
+      deleted=$((deleted+1))
     fi
   done
 }}
