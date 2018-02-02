@@ -40,11 +40,38 @@ map global user B ':mode-buffers lock<ret>' -docstring 'buffers (lock)…'
 
 # Suggested aliases
 
+alias global bd delete-buffer
 alias global bf buffer-first
 alias global bl buffer-last
 alias global bo buffer-only
 alias global bo! buffer-only!
 ```
+
+## More controversial mappings
+
+Ask yourself: how often do you use macros? If you're like me, not so much thanks to all the cool interactive ways 
+to accomplish a task with kakoune. But they waste a nice spot on the `q` key! Time to free it for something else.
+
+What about moving the `b` actions, (*moving word backward*) here instead? It makes sense on a `qwerty` keyboard.
+The `q` is on the left of `w` which goes the opposite direction. The `q`, `w` and `e` actions are now finally together
+just under your left hand like the 3 musketeers.
+
+Therefore your `b` key is free and you can now use it for `buffer` actions:
+
+```
+# ciao macros
+map global normal ^ q
+map global normal <a-^> Q
+
+map global normal q b
+map global normal Q B
+map global normal <a-q> <a-b>
+map global normal <a-Q> <a-B>
+
+map global normal b :mode-buffers<ret> -docstring 'buffers…'
+map global normal B ':mode-buffers lock<ret>' -docstring 'buffers (lock)…'
+```
+
 
 ## Screenshots
 

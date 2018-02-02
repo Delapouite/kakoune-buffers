@@ -123,7 +123,7 @@ def buffer-only-directory -docstring 'delete all saved buffers except the ones i
 }}
 
 def -hidden mode-buffers -params ..1 %{
-  info -title  %sh{[ $1 = lock ] && echo "'buffers (lock)'" || echo 'buffers' } \
+  info -title %sh{[ $1 = lock ] && echo "'buffers (lock)'" || echo 'buffers' } \
 %{[1-9]: by index
 a: alternate
 b: list
@@ -167,6 +167,7 @@ p: previous}
 
 # Suggested aliases
 
+#alias global bd delete-buffer
 #alias global bf buffer-first
 #alias global bl buffer-last
 #alias global bo buffer-only
