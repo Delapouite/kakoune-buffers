@@ -127,6 +127,7 @@ def -hidden mode-buffers -params ..1 %{
 %{[1-9]: by index
 a: alternate
 b: list
+c: config
 d: delete
 f: find
 h: first
@@ -139,6 +140,7 @@ p: previous}
       [1-9]) echo "buffer-by-index $kak_key" ;;
       a) echo exec 'ga' ;;
       b) echo list-buffers ;;
+      c) echo exec ':edit<space>~/.config/kak/kakrc<ret>' ;;
       d) echo delete-buffer ;;
       f) echo exec ':buffer<space>' ;;
       h) echo buffer-first ;;
