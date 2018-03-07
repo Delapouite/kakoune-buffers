@@ -123,7 +123,7 @@ def buffer-only-directory -docstring 'delete all saved buffers except the ones i
 }}
 
 def -hidden mode-buffers -params ..1 %{
-  info -title %sh{[ $1 = lock ] && echo "'buffers (lock)'" || echo 'buffers' } \
+  info -title %sh{[ "$1" = lock ] && echo "'buffers (lock)'" || echo 'buffers' } \
 %{[1-9]: by index
 a: alternate
 b: list
@@ -134,7 +134,9 @@ h: first
 l: last
 n: next
 o: only
-p: previous}
+p: previous
+s: *scratch*
+u: *debug*}
   on-key %{ %sh{
     case "$kak_key" in
       [1-9]) echo "buffer-by-index $kak_key" ;;
@@ -148,6 +150,8 @@ p: previous}
       n) echo buffer-next ;;
       o) echo buffer-only ;;
       p) echo buffer-previous ;;
+      s) echo exec ':edit<space>-scratch<space>*scratch*<ret>';;
+      u) echo exec ':buffer<space>*debug*<ret>';;
       # info hides the previous one
       *) echo info; esc=true ;;
     esac

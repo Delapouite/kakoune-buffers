@@ -72,7 +72,6 @@ map global normal b :mode-buffers<ret> -docstring 'buffers…'
 map global normal B ':mode-buffers lock<ret>' -docstring 'buffers (lock)…'
 ```
 
-
 ## Screenshots
 
 *info* displayed by the `list-buffers` command:
