@@ -122,45 +122,29 @@ def buffer-only-directory -docstring 'delete all saved buffers except the ones i
   done
 }}
 
-def -hidden mode-buffers -params ..1 %{
-  info -title %sh{[ "$1" = lock ] && echo "'buffers (lock)'" || echo 'buffers' } \
-%{[1-9]: by index
-a: alternate
-b: list
-c: config
-d: delete
-f: find
-h: first
-l: last
-n: next
-o: only
-p: previous
-s: *scratch*
-u: *debug*}
-  on-key %{ %sh{
-    case "$kak_key" in
-      [1-9]) echo "buffer-by-index $kak_key" ;;
-      a) echo exec 'ga' ;;
-      b) echo list-buffers ;;
-      c) echo exec ':edit<space>~/.config/kak/kakrc<ret>' ;;
-      d) echo delete-buffer ;;
-      f) echo exec ':buffer<space>' ;;
-      h) echo buffer-first ;;
-      l) echo buffer-last ;;
-      n) echo buffer-next ;;
-      o) echo buffer-only ;;
-      p) echo buffer-previous ;;
-      s) echo exec ':edit<space>-scratch<space>*scratch*<ret>';;
-      u) echo exec ':buffer<space>*debug*<ret>';;
-      # info hides the previous one
-      *) echo info; esc=true ;;
-    esac
-    # repeat?
-    if [ "$1" = lock ] && [ "$esc" != true ]; then
-      echo ';mode-buffers lock;list-buffers'
-    fi
-  }}
-}
+declare-user-mode buffers
+
+map global buffers a ga                                     -docstring 'alternate'
+map global buffers b :list-buffers<ret>                     -docstring 'list'
+map global buffers c ':edit<space>~/.config/kak/kakrc<ret>' -docstring 'config'
+map global buffers d :delete-buffer<ret>                    -docstring 'delete'
+map global buffers f :buffer<space>                         -docstring 'find'
+map global buffers h :buffer-first<ret>                     -docstring 'first'
+map global buffers l :buffer-last<ret>                      -docstring 'last'
+map global buffers n :buffer-next<ret>                      -docstring 'next'
+map global buffers o :buffer-only<ret>                      -docstring 'only'
+map global buffers p :buffer-previous<ret>                  -docstring 'previous'
+map global buffers s ':edit -scratch *scratch*<ret>'        -docstring '*scratch*'
+map global buffers u ':buffer *debug*<ret>'                 -docstring '*debug*'
+
+# trick to access count, 3b → display third buffer
+define-command -hidden enter-buffers-mode %{ %sh{
+  if [ "$kak_count" -eq 0 ]; then
+    echo 'enter-user-mode buffers'
+  else
+    echo "buffer-by-index $kak_count"
+  fi
+}}
 
 # Suggested hook
 
@@ -168,8 +152,8 @@ u: *debug*}
 
 # Suggested mappings
 
-#map global user b :mode-buffers<ret> -docstring 'buffers…'
-#map global user B ':mode-buffers lock<ret>' -docstring 'buffers (lock)…'
+#map global user b ':enter-buffers-mode<ret>'              -docstring 'buffers…'
+#map global user B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers (lock)…'
 
 # Suggested aliases
 

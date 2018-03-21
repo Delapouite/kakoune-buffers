@@ -22,10 +22,9 @@ Use `buffer-first` and `buffer-last` to move to the ends of the list.
 To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only!` version.
 You can also delete all buffers except the ones in the same dir as the current buffer with `buffer-only-directory`.
 
-All this commands are grouped in a dedicated *menu* that can be triggered with `mode-buffers`.
+All these commands are grouped in a dedicated `buffers` user-mode.
 
-This *menu* has a behavior similar to the one dealing with the view (`v` key), it can be opened
-in *lock* mode. When locked, it means that you can press `n` many times to successively see your buffers.
+While opened in `lock` mode, it means that you can press `p` or `n` many times to cycle through your buffers.
 Press `<esc>` to leave this mode.
 
 ```
@@ -35,8 +34,8 @@ hook global WinDisplay .* list-buffers
 
 # Suggested mappings
 
-map global user b :mode-buffers<ret> -docstring 'buffers…'
-map global user B ':mode-buffers lock<ret>' -docstring 'buffers (lock)…'
+map global user b ':enter-buffers-mode<ret>'              -docstring 'buffers…'
+map global user B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers (lock)…'
 
 # Suggested aliases
 
@@ -50,7 +49,7 @@ alias global bo! buffer-only!
 ## More controversial mappings
 
 Ask yourself: how often do you use macros? If you're like me, not so much thanks to all the cool interactive ways 
-to accomplish a task with kakoune. But they waste a nice spot on the `q` key! Time to free it for something else.
+to accomplish a task with Kakoune. But they waste a nice spot on the `q` key! Time to free it for something else.
 
 What about moving the `b` actions, (*moving word backward*) here instead? It makes sense on a `qwerty` keyboard.
 The `q` is on the left of `w` which goes the opposite direction. The `q`, `w` and `e` actions are now finally together
@@ -68,8 +67,8 @@ map global normal Q B
 map global normal <a-q> <a-b>
 map global normal <a-Q> <a-B>
 
-map global normal b :mode-buffers<ret> -docstring 'buffers…'
-map global normal B ':mode-buffers lock<ret>' -docstring 'buffers (lock)…'
+map global normal b ':enter-buffers-mode<ret>'              -docstring 'buffers…'
+map global normal B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers (lock)…'
 ```
 
 ## Screenshots
@@ -78,7 +77,7 @@ map global normal B ':mode-buffers lock<ret>' -docstring 'buffers (lock)…'
 
 ![list-buffers](https://raw.githubusercontent.com/delapouite/kakoune-buffers/master/list-buffers.jpg)
 
-*info* displayed by the `mode-buffers` command:
+*info* displayed by the `buffers` user-mode:
 
 ![mode-buffers](https://raw.githubusercontent.com/delapouite/kakoune-buffers/master/mode-buffers.jpg)
 
