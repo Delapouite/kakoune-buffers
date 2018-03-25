@@ -94,7 +94,7 @@ def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
   done
 }}
 
-def buffer-only! -docstring 'delete all buffers except current one' %{ %sh{
+def buffer-only-force -docstring 'delete all buffers except current one' %{ %sh{
   deleted=0
 
   printf '%s\n' "$kak_buflist" | tr ':' '\n' |
@@ -161,4 +161,4 @@ define-command -hidden enter-buffers-mode %{ %sh{
 #alias global bf buffer-first
 #alias global bl buffer-last
 #alias global bo buffer-only
-#alias global bo! buffer-only!
+#alias global bo! buffer-only-force

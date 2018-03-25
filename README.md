@@ -19,7 +19,7 @@ If this list gets too big, decrease the `max_list_buffers` option.
 To jump to a specific buffer index use the `buffer-by-index n` command.
 Use `buffer-first` and `buffer-last` to move to the ends of the list.
 
-To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only!` version.
+To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only-force` version.
 You can also delete all buffers except the ones in the same dir as the current buffer with `buffer-only-directory`.
 
 All these commands are grouped in a dedicated `buffers` user-mode.
@@ -43,7 +43,7 @@ alias global bd delete-buffer
 alias global bf buffer-first
 alias global bl buffer-last
 alias global bo buffer-only
-alias global bo! buffer-only!
+alias global bo! buffer-only-force
 ```
 
 ## More controversial mappings
