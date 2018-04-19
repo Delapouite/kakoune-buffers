@@ -81,6 +81,17 @@ def -hidden -params 1 buffer-by-index %{ %sh{
   done
 }}
 
+def delete-buffers -docstring 'delete all saved buffers' %{ %sh{
+  deleted=0
+
+  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
+  while read buf; do
+    echo "try 'db $buf'"
+    echo "echo -markup '{Information}$deleted buffers deleted'"
+    deleted=$((deleted+1))
+  done
+}}
+
 def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
   deleted=0
 
@@ -128,6 +139,7 @@ map global buffers a ga                                     -docstring 'alternat
 map global buffers b :list-buffers<ret>                     -docstring 'list'
 map global buffers c ':edit<space>~/.config/kak/kakrc<ret>' -docstring 'config'
 map global buffers d :delete-buffer<ret>                    -docstring 'delete'
+map global buffers D :delete-buffers<ret>                   -docstring 'delete all'
 map global buffers f :buffer<space>                         -docstring 'find'
 map global buffers h :buffer-first<ret>                     -docstring 'first'
 map global buffers l :buffer-last<ret>                      -docstring 'last'
