@@ -11,7 +11,7 @@ def -hidden refresh-buffers-info %{
   eval -no-hooks -buffer * %{
     set -add global buffers_info "%val{bufname}_%val{modified}"
   }
-  %sh{
+  evaluate-commands %sh{
     total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' | wc -l)
     printf '%s\n' "set global buffers_total $total"
   }
@@ -30,7 +30,7 @@ hook global WinDisplay .* %{
 
 def list-buffers -docstring 'populate an info box with a numbered buffers list' %{
   refresh-buffers-info
-  %sh{
+  evaluate-commands %sh{
     # info title
     index=0
     printf "info -title '$kak_opt_buffers_total buffers' -- %%^"
@@ -69,7 +69,7 @@ def buffer-last -docstring 'move to the last buffer in the list' %{
   buffer-by-index %opt{buffers_total}
 }
 
-def -hidden -params 1 buffer-by-index %{ %sh{
+def -hidden -params 1 buffer-by-index %{ evaluate-commands %sh{
   index=0
 
   printf '%s\n' "$kak_buflist" | tr ':' '\n' |
@@ -81,7 +81,7 @@ def -hidden -params 1 buffer-by-index %{ %sh{
   done
 }}
 
-def delete-buffers -docstring 'delete all saved buffers' %{ %sh{
+def delete-buffers -docstring 'delete all saved buffers' %{ evaluate-commands %sh{
   deleted=0
 
   printf '%s\n' "$kak_buflist" | tr ':' '\n' |
@@ -92,7 +92,7 @@ def delete-buffers -docstring 'delete all saved buffers' %{ %sh{
   done
 }}
 
-def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
+def buffer-only -docstring 'delete all saved buffers except current one' %{ evaluate-commands %sh{
   deleted=0
 
   printf '%s\n' "$kak_buflist" | tr ':' '\n' |
@@ -105,7 +105,7 @@ def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
   done
 }}
 
-def buffer-only-force -docstring 'delete all buffers except current one' %{ %sh{
+def buffer-only-force -docstring 'delete all buffers except current one' %{ evaluate-commands %sh{
   deleted=0
 
   printf '%s\n' "$kak_buflist" | tr ':' '\n' |
@@ -118,7 +118,7 @@ def buffer-only-force -docstring 'delete all buffers except current one' %{ %sh{
   done
 }}
 
-def buffer-only-directory -docstring 'delete all saved buffers except the ones in the same current buffer directory' %{ %sh{
+def buffer-only-directory -docstring 'delete all saved buffers except the ones in the same current buffer directory' %{ evaluate-commands %sh{
   deleted=0
   current_buffer_dir=$(dirname "$kak_bufname")
 
@@ -150,7 +150,7 @@ map global buffers s ':edit -scratch *scratch*<ret>'        -docstring '*scratch
 map global buffers u ':buffer *debug*<ret>'                 -docstring '*debug*'
 
 # trick to access count, 3b → display third buffer
-define-command -hidden enter-buffers-mode %{ %sh{
+define-command -hidden enter-buffers-mode %{ evaluate-commands %sh{
   if [ "$kak_count" -eq 0 ]; then
     echo 'enter-user-mode buffers'
   else
