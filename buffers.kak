@@ -148,11 +148,17 @@ define-command buffer-only-directory -docstring 'delete all saved buffers except
   }
 }
 
+define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
+  evaluate-commands %sh{
+    printf '%s\n' "edit $kak_config/kakrc"
+  }
+}
+
 declare-user-mode buffers
 
 map global buffers a ga                                     -docstring 'alternate'
 map global buffers b :info-buffers<ret>                     -docstring 'info'
-map global buffers c ':edit<space>~/.config/kak/kakrc<ret>' -docstring 'config'
+map global buffers c :edit-kakrc<ret>                       -docstring 'config'
 map global buffers d :delete-buffer<ret>                    -docstring 'delete'
 map global buffers D :delete-buffers<ret>                   -docstring 'delete all'
 map global buffers f :buffer<space>                         -docstring 'find'
