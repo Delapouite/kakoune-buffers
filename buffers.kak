@@ -1,41 +1,43 @@
 # buflist++: names AND modified bool
 # debug buffers (like *debug*, *lint*…) are excluded
-decl -hidden str-list buffers_info
+declare-option -hidden str-list buffers_info
 
-decl int buffers_total
+declare-option int buffers_total
 
 # used to handle [+] (modified) symbol in list
-def -hidden refresh-buffers-info %{
-  set global buffers_info ''
-  # iteration over all buffers
-  eval -no-hooks -buffer * %{
-    set -add global buffers_info "%val{bufname}_%val{modified}"
+define-command -hidden refresh-buffers-info %{
+  set-option global buffers_info
+  set-option global buffers_total 0
+  # iteration over all buffers (except debug ones)
+  evaluate-commands -no-hooks -buffer * %{
+    set-option -add global buffers_info "%val{bufname}_%val{modified}"
   }
-  %sh{
-    total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' | wc -l)
-    printf '%s\n' "set global buffers_total $total"
+  evaluate-commands %sh{
+    total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ' ' '\n' | wc -l)
+    printf '%s\n' "set-option global buffers_total $total"
   }
 }
 
 # used to handle # (alt) symbol in list
-decl str alt_bufname
-decl str current_bufname
+declare-option str alt_bufname
+declare-option str current_bufname
 # adjust this number to display more buffers in info
-decl int max_list_buffers 42
+declare-option int max_list_buffers 42
 
 hook global WinDisplay .* %{
-  set global alt_bufname %opt{current_bufname}
-  set global current_bufname %val{bufname}
+  set-option global alt_bufname %opt{current_bufname}
+  set-option global current_bufname %val{bufname}
 }
 
-def list-buffers -docstring 'populate an info box with a numbered buffers list' %{
+define-command info-buffers -docstring 'populate an info box with a numbered buffers list' %{
   refresh-buffers-info
-  %sh{
+  evaluate-commands %sh{
     # info title
-    index=0
     printf "info -title '$kak_opt_buffers_total buffers' -- %%^"
-    printf '%s\n' "$kak_opt_buffers_info" | tr ':' '\n' |
-    while read info; do
+
+    index=0
+    eval "set -- $kak_opt_buffers_info"
+    while [ "$1" ]; do
       # limit lists too big
       index=$(($index + 1))
       if [ "$index" -gt "$kak_opt_max_list_buffers" ]; then
@@ -43,7 +45,7 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
         break
       fi
 
-      name=${info%_*}
+      name=${1%_*}
       if [ "$name" = "$kak_bufname" ]; then
         printf "> %s" "$index - $name"
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
@@ -52,91 +54,104 @@ def list-buffers -docstring 'populate an info box with a numbered buffers list' 
         printf "  %s" "$index - $name"
       fi
 
-      modified=${info##*_}
+      modified=${1##*_}
       if [ "$modified" = true ]; then
         printf " [+]"
       fi
       echo
+      shift
     done
     printf ^\\n
   }
 }
 
-def buffer-first -docstring 'move to the first buffer in the list' 'buffer-by-index 1'
+define-command buffer-first -docstring 'move to the first buffer in the list' 'buffer-by-index 1'
 
-def buffer-last -docstring 'move to the last buffer in the list' %{
-  refresh-buffers-info
+define-command buffer-last -docstring 'move to the last buffer in the list' %{
   buffer-by-index %opt{buffers_total}
 }
 
-def -hidden -params 1 buffer-by-index %{ %sh{
-  index=0
+define-command -hidden -params 1 buffer-by-index %{
+  refresh-buffers-info
+  evaluate-commands %sh{
+    target=$1
+    index=0
+    eval "set -- $kak_opt_buffers_info"
+    while [ "$1" ]; do
+      index=$(($index+1))
+      name=${1%_*}
+      if [ $index = $target ]; then
+        echo "buffer $name"
+      fi
+      shift
+    done
+  }
+}
 
-  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
-  while read buf; do
-    index=$(($index+1))
-    if [ $index = $1 ]; then
-      echo "b $buf"
-    fi
-  done
-}}
-
-def delete-buffers -docstring 'delete all saved buffers' %{ %sh{
-  deleted=0
-
-  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
-  while read buf; do
-    echo "try 'db $buf'"
-    echo "echo -markup '{Information}$deleted buffers deleted'"
-    deleted=$((deleted+1))
-  done
-}}
-
-def buffer-only -docstring 'delete all saved buffers except current one' %{ %sh{
-  deleted=0
-
-  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
-  while read buf; do
-    if [ "$buf" != "$kak_bufname" ]; then
-      echo "try 'db $buf'"
+define-command delete-buffers -docstring 'delete all saved buffers' %{
+  evaluate-commands %sh{
+    deleted=0
+    eval "set -- $kak_buflist"
+    while [ "$1" ]; do
+      echo "try 'delete-buffer $1'"
       echo "echo -markup '{Information}$deleted buffers deleted'"
       deleted=$((deleted+1))
-    fi
-  done
-}}
+      shift
+    done
+  }
+}
 
-def buffer-only-force -docstring 'delete all buffers except current one' %{ %sh{
-  deleted=0
+define-command buffer-only -docstring 'delete all saved buffers except current one' %{
+  evaluate-commands %sh{
+    deleted=0
+    eval "set -- $kak_buflist"
+    while [ "$1" ]; do
+      if [ "$1" != "$kak_bufname" ]; then
+        echo "try 'delete-buffer $1'"
+        echo "echo -markup '{Information}$deleted buffers deleted'"
+        deleted=$((deleted+1))
+      fi
+      shift
+    done
+  }
+}
 
-  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
-  while read buf; do
-    if [ "$buf" != "$kak_bufname" ]; then
-      echo "db! $buf"
-      echo "echo -markup '{Information}$deleted buffers deleted'"
-      deleted=$((deleted+1))
-    fi
-  done
-}}
+define-command buffer-only-force -docstring 'delete all buffers except current one' %{
+  evaluate-commands %sh{
+    deleted=0
+    eval "set -- $kak_buflist"
+    while [ "$1" ]; do
+      if [ "$1" != "$kak_bufname" ]; then
+        echo "delete-buffer! $1"
+        echo "echo -markup '{Information}$deleted buffers deleted'"
+        deleted=$((deleted+1))
+      fi
+      shift
+    done
+  }
+}
 
-def buffer-only-directory -docstring 'delete all saved buffers except the ones in the same current buffer directory' %{ %sh{
-  deleted=0
-  current_buffer_dir=$(dirname "$kak_bufname")
-
-  printf '%s\n' "$kak_buflist" | tr ':' '\n' |
-  while read buf; do
-    dir=$(dirname "$buf")
-    if [ $dir != "$current_buffer_dir" ]; then
-      echo "try 'db $buf'"
-      echo "echo -markup '{Information}$deleted buffers deleted'"
-      deleted=$((deleted+1))
-    fi
-  done
-}}
+define-command buffer-only-directory -docstring 'delete all saved buffers except the ones in the same current buffer directory' %{
+  evaluate-commands %sh{
+    deleted=0
+    current_buffer_dir=$(dirname "$kak_bufname")
+    eval "set -- $kak_buflist"
+    while [ "$1" ]; do
+      dir=$(dirname "$1")
+      if [ $dir != "$current_buffer_dir" ]; then
+        echo "try 'delete-buffer $1'"
+        echo "echo -markup '{Information}$deleted buffers deleted'"
+        deleted=$((deleted+1))
+      fi
+      shift
+    done
+  }
+}
 
 declare-user-mode buffers
 
 map global buffers a ga                                     -docstring 'alternate'
-map global buffers b :list-buffers<ret>                     -docstring 'list'
+map global buffers b :info-buffers<ret>                     -docstring 'info'
 map global buffers c ':edit<space>~/.config/kak/kakrc<ret>' -docstring 'config'
 map global buffers d :delete-buffer<ret>                    -docstring 'delete'
 map global buffers D :delete-buffers<ret>                   -docstring 'delete all'
@@ -150,17 +165,19 @@ map global buffers s ':edit -scratch *scratch*<ret>'        -docstring '*scratch
 map global buffers u ':buffer *debug*<ret>'                 -docstring '*debug*'
 
 # trick to access count, 3b → display third buffer
-define-command -hidden enter-buffers-mode %{ %sh{
-  if [ "$kak_count" -eq 0 ]; then
-    echo 'enter-user-mode buffers'
-  else
-    echo "buffer-by-index $kak_count"
-  fi
-}}
+define-command -hidden enter-buffers-mode %{
+  evaluate-commands %sh{
+    if [ "$kak_count" -eq 0 ]; then
+      echo 'enter-user-mode buffers'
+    else
+      echo "buffer-by-index $kak_count"
+    fi
+  }
+}
 
 # Suggested hook
 
-#hook global WinDisplay .* list-buffers
+#hook global WinDisplay .* info-buffers
 
 # Suggested mappings
 
