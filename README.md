@@ -8,7 +8,7 @@ Add `buffers.kak` to your autoload dir: `~/.config/kak/autoload/`.
 
 ## Usage
 
-Run the `list-buffers` command. It will display an info box with a numbered list of opened buffers.
+Run the `info-buffers` command. It will display an info box with a numbered list of opened buffers.
 
 - The current buffer is prefixed by a `>`.
 - The alt buffer is prefixed by a `#` (use `ga` to reach it).
@@ -30,7 +30,7 @@ Press `<esc>` to leave this mode.
 ```
 # Suggested hook
 
-hook global WinDisplay .* list-buffers
+hook global WinDisplay .* info-buffers
 
 # Suggested mappings
 
@@ -73,9 +73,9 @@ map global normal B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers 
 
 ## Screenshots
 
-*info* displayed by the `list-buffers` command:
+*info* displayed by the `info-buffers` command:
 
-![list-buffers](https://raw.githubusercontent.com/delapouite/kakoune-buffers/master/list-buffers.jpg)
+![info-buffers](https://raw.githubusercontent.com/delapouite/kakoune-buffers/master/list-buffers.jpg)
 
 *info* displayed by the `buffers` user-mode:
 
