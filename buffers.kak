@@ -77,7 +77,6 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
     keys=" $kak_opt_buffer_keys"
     num_keys=$(($(echo "$kak_opt_buffer_keys" | wc -m) - 1))
     eval "set -- $kak_opt_buffers_info"
-    echo "echo -debug \"buffers info: $kak_opt_buffers_info keys: '$kak_opt_buffer_keys' num_keys: $num_keys\""
     while [ "$1" ]; do
       # limit lists too big
       index=$(($index + 1))
@@ -87,7 +86,6 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
 
       name=${1%_*}
       modified=${1##*_}
-      echo "echo -debug \"index: $index name: $name modified: $modified\""
       if [ "$name" = "$kak_bufname" ]; then
         echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"> $name $(if [ "$modified" = true ]; then echo "[+]"; fi)\""
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
