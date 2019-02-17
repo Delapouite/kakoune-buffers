@@ -4,6 +4,9 @@ declare-option -hidden str-list buffers_info
 
 declare-option int buffers_total
 
+# keys to use for buffer picking
+declare-option str buffer_keys "1234567890qwertyuiopasdfghjklzxcvbnm"
+
 # used to handle [+] (modified) symbol in list
 define-command -hidden refresh-buffers-info %{
   set-option global buffers_info
@@ -63,6 +66,38 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
     done
     printf ^\\n
   }
+}
+
+declare-user-mode pick-buffers
+define-command pick-buffers -docstring 'enter buffer pick mode' %{
+  refresh-buffers-info
+  unmap global pick-buffers
+  evaluate-commands %sh{
+    index=0
+    keys=" $kak_opt_buffer_keys"
+    num_keys=$(($(echo "$kak_opt_buffer_keys" | wc -m) - 1))
+    eval "set -- $kak_opt_buffers_info"
+    while [ "$1" ]; do
+      # limit lists too big
+      index=$(($index + 1))
+      if [ "$index" -gt "$num_keys" ]; then
+        break
+      fi
+
+      name=${1%_*}
+      modified=${1##*_}
+      if [ "$name" = "$kak_bufname" ]; then
+        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"> $name $(if [ "$modified" = true ]; then echo "[+]"; fi)\""
+      elif [ "$name" = "$kak_opt_alt_bufname" ]; then
+        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"# $name $(if [ "$modified" = true ]; then echo "[+]"; fi)\""
+      else
+        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"  $name $(if [ "$modified" = true ]; then echo "[+]"; fi)\""
+      fi
+
+      shift
+    done
+  }
+  enter-user-mode pick-buffers
 }
 
 define-command buffer-first -docstring 'move to the first buffer in the list' 'buffer-by-index 1'
