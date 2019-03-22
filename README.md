@@ -85,6 +85,7 @@ map global normal B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers 
 
 - [kakoune-cd](https://github.com/Delapouite/kakoune-cd)
 - [kakoune-registers](https://github.com/Delapouite/kakoune-registers)
+- [explore.kak](https://github.com/alexherbo2/explore.kak)
 - [ncurses implementation of a buffer list](https://github.com/mawww/kakoune/pull/1065)
 
 ## Licence
