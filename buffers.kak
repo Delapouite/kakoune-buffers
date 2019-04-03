@@ -50,18 +50,26 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
 
       name=${1%_*}
       if [ "$name" = "$kak_bufname" ]; then
-        printf "> %s" "$index - $name"
+        printf ">"
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        printf "# %s" "$index - $name"
+        printf "#"
       else
-        printf "  %s" "$index - $name"
+        printf " "
       fi
 
       modified=${1##*_}
       if [ "$modified" = true ]; then
-        printf " [+]"
+        printf "+ "
+      else
+        printf "  "
       fi
-      echo
+
+      if [ "$index" -lt 10 ]; then
+        echo "0$index - $name"
+      else
+        echo "$index - $name"
+      fi
+
       shift
     done
     printf ^\\n
@@ -87,11 +95,11 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
       name=${1%_*}
       modified=${1##*_}
       if [ "$name" = "$kak_bufname" ]; then
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"> $name $(if [ "$modified" = true ]; then echo "[+]"; fi)\""
+        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \">$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"# $name $(if [ "$modified" = true ]; then echo "[+]"; fi)\""
+        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"#$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
       else
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"  $name $(if [ "$modified" = true ]; then echo "[+]"; fi)\""
+        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \" $(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
       fi
 
       shift

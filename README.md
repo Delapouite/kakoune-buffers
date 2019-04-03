@@ -12,7 +12,7 @@ Run the `info-buffers` command. It will display an info box with a numbered list
 
 - The current buffer is prefixed by a `>`.
 - The alt buffer is prefixed by a `#` (use `ga` to reach it).
-- Modified buffers are suffixed by a `[+]`.
+- Modified buffers are prefixed by a `+`.
 
 If this list gets too big, decrease the `max_list_buffers` option (42 entries by default).
 
