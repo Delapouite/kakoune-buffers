@@ -14,13 +14,16 @@ Run the `info-buffers` command. It will display an info box with a numbered list
 - The alt buffer is prefixed by a `#` (use `ga` to reach it).
 - Modified buffers are suffixed by a `[+]`.
 
-If this list gets too big, decrease the `max_list_buffers` option.
+If this list gets too big, decrease the `max_list_buffers` option (42 entries by default).
 
 To jump to a specific buffer index use the `buffer-by-index n` command.
 Use `buffer-first` and `buffer-last` to move to the ends of the list.
+With `buffer-first-modified`, jump to the first modified buffer.
 
 To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only-force` version.
 You can also delete all buffers except the ones in the same dir as the current buffer with `buffer-only-directory`.
+
+## User mode
 
 All these commands are grouped in a dedicated `buffers` user-mode.
 

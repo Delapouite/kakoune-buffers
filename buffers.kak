@@ -123,6 +123,21 @@ define-command -hidden -params 1 buffer-by-index %{
   }
 }
 
+define-command buffer-first-modified -docstring 'move to the first modified buffer in the list' %{
+  refresh-buffers-info
+  evaluate-commands %sh{
+    eval "set -- $kak_opt_buffers_info"
+    while [ "$1" ]; do
+      name=${1%_*}
+      modified=${1##*_}
+      if [ "$modified" = true ]; then
+        echo "buffer $name"
+      fi
+      shift
+    done
+  }
+}
+
 define-command delete-buffers -docstring 'delete all saved buffers' %{
   evaluate-commands %sh{
     deleted=0
@@ -199,6 +214,7 @@ map global buffers D :delete-buffers<ret>                   -docstring 'delete a
 map global buffers f :buffer<space>                         -docstring 'find'
 map global buffers h :buffer-first<ret>                     -docstring 'first'
 map global buffers l :buffer-last<ret>                      -docstring 'last'
+map global buffers m :buffer-first-modified<ret>            -docstring 'modified'
 map global buffers n :buffer-next<ret>                      -docstring 'next'
 map global buffers o :buffer-only<ret>                      -docstring 'only'
 map global buffers p :buffer-previous<ret>                  -docstring 'previous'
