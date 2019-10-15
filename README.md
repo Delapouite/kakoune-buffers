@@ -6,6 +6,21 @@
 
 Add `buffers.kak` to your autoload dir: `~/.config/kak/autoload/`.
 
+Or via [plug.kak](https://github.com/andreyorst/plug.kak):
+
+```
+plug 'delapouite/kakoune-buffers' %{
+  map global normal ^ q
+  map global normal <a-^> Q
+  map global normal q b
+  map global normal Q B
+  map global normal <a-q> <a-b>
+  map global normal <a-Q> <a-B>
+  map global normal b ': enter-buffers-mode<ret>' -docstring 'buffers'
+  map global normal B ': enter-user-mode -lock buffers<ret>' -docstring 'buffers (lock)'
+}
+```
+
 ## Usage
 
 Run the `info-buffers` command. It will display an info box with a numbered list of opened buffers.
