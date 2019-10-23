@@ -17,7 +17,7 @@ define-command -hidden refresh-buffers-info %{
   }
   evaluate-commands %sh{
     total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ' ' '\n' | wc -l)
-    printf '%s\n' "set-option global buffers_total $total"
+    printf "set-option global buffers_total $total"
   }
 }
 
@@ -50,18 +50,18 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
 
       name=${1%_*}
       if [ "$name" = "$kak_bufname" ]; then
-        printf ">"
+        printf '>'
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        printf "#"
+        printf '#'
       else
-        printf " "
+        printf ' '
       fi
 
       modified=${1##*_}
       if [ "$modified" = true ]; then
-        printf "+ "
+        printf '+ '
       else
-        printf "  "
+        printf '  '
       fi
 
       if [ "$index" -lt 10 ]; then
@@ -124,7 +124,7 @@ define-command -hidden -params 1 buffer-by-index %{
       index=$(($index+1))
       name=${1%_*}
       if [ $index = $target ]; then
-        echo "buffer $name"
+        printf "buffer $name"
       fi
       shift
     done
@@ -139,7 +139,7 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
       name=${1%_*}
       modified=${1##*_}
       if [ "$modified" = true ]; then
-        echo "buffer $name"
+        printf "buffer $name"
       fi
       shift
     done
@@ -208,24 +208,25 @@ define-command buffer-only-directory -docstring 'delete all saved buffers except
 
 define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
   evaluate-commands %sh{
-    printf '%s\n' "edit $kak_config/kakrc"
+    printf "edit $kak_config/kakrc"
   }
 }
 
 declare-user-mode buffers
 
-map global buffers a 'ga'                             -docstring 'alternate'
+map global buffers a 'ga'                             -docstring 'alternate ↔'
 map global buffers b ': info-buffers<ret>'            -docstring 'info'
 map global buffers c ': edit-kakrc<ret>'              -docstring 'config'
 map global buffers d ': delete-buffer<ret>'           -docstring 'delete'
 map global buffers D ': delete-buffers<ret>'          -docstring 'delete all'
 map global buffers f ': buffer<space>'                -docstring 'find'
-map global buffers h ': buffer-first<ret>'            -docstring 'first'
-map global buffers l ': buffer-last<ret>'             -docstring 'last'
+map global buffers h ': buffer-first<ret>'            -docstring 'first ⇐'
+map global buffers l ': buffer-last<ret>'             -docstring 'last ⇒'
 map global buffers m ': buffer-first-modified<ret>'   -docstring 'modified'
-map global buffers n ': buffer-next<ret>'             -docstring 'next'
+map global buffers n ': buffer-next<ret>'             -docstring 'next →'
 map global buffers o ': buffer-only<ret>'             -docstring 'only'
-map global buffers p ': buffer-previous<ret>'         -docstring 'previous'
+map global buffers p ': buffer-previous<ret>'         -docstring 'previous ←'
+map global buffers r ': rename-buffer '               -docstring 'rename'
 map global buffers s ': edit -scratch *scratch*<ret>' -docstring '*scratch*'
 map global buffers u ': buffer *debug*<ret>'          -docstring '*debug*'
 
@@ -233,9 +234,9 @@ map global buffers u ': buffer *debug*<ret>'          -docstring '*debug*'
 define-command -hidden enter-buffers-mode %{
   evaluate-commands %sh{
     if [ "$kak_count" -eq 0 ]; then
-      echo 'enter-user-mode buffers'
+      printf 'enter-user-mode buffers'
     else
-      echo "buffer-by-index $kak_count"
+      printf "buffer-by-index $kak_count"
     fi
   }
 }
