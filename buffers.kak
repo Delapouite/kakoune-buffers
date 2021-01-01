@@ -81,9 +81,16 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
   refresh-buffers-info
   unmap global pick-buffers
   evaluate-commands %sh{
+    docstring() {
+      if [ "$1" = true ]; then
+        printf "%s+ %s" "$2" "$3"
+      else
+        printf "%s  %s" "$2" "$3"
+      fi
+    }
     index=0
     keys=" $kak_opt_buffer_keys"
-    num_keys=$(($(echo "$kak_opt_buffer_keys" | wc -m) - 1))
+    num_keys=${#kak_opt_buffer_keys}
     eval "set -- $kak_quoted_opt_buffers_info"
     while [ "$1" ]; do
       # limit lists too big
@@ -95,11 +102,11 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
       name=${1%_*}
       modified=${1##*_}
       if [ "$name" = "$kak_bufname" ]; then
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \">$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
+        printf "map global pick-buffers %s :<space>buffer-by-index<space>%s<ret> -docstring '%s'\n" ${keys:$index:1} $index "$(docstring $modified '>' "$name")"
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"#$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
+        printf "map global pick-buffers %s :<space>buffer-by-index<space>%s<ret> -docstring '%s'\n" ${keys:$index:1} $index "$(docstring $modified '#' "$name")"
       else
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \" $(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
+        printf "map global pick-buffers %s :<space>buffer-by-index<space>%s<ret> -docstring '%s'\n" ${keys:$index:1} $index "$(docstring $modified ':' "$name")"
       fi
 
       shift
