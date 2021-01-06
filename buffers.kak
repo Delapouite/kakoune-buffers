@@ -42,7 +42,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
     eval "set -- $kak_quoted_opt_buffers_info"
     while [ "$1" ]; do
       # limit lists too big
-      index=$(($index + 1))
+      index=$((index + 1))
       if [ "$index" -gt "$kak_opt_max_list_buffers" ]; then
         printf '  …'
         break
@@ -94,7 +94,7 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
     eval "set -- $kak_quoted_opt_buffers_info"
     while [ "$1" ]; do
       # limit lists too big
-      index=$(($index + 1))
+      index=$((index + 1))
       if [ "$index" -gt "$num_keys" ]; then
         break
       fi
@@ -128,7 +128,7 @@ define-command -hidden -params 1 buffer-by-index %{
     index=0
     eval "set -- $kak_quoted_opt_buffers_info"
     while [ "$1" ]; do
-      index=$(($index+1))
+      index=$((index+1))
       name=${1%_*}
       if [ $index = $target ]; then
         printf "buffer '$name'"
