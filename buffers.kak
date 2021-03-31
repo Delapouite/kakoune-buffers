@@ -92,14 +92,15 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
         break
       fi
 
+      buf_id=$(echo ${keys} | cut -c${index})
       name=${1%_*}
       modified=${1##*_}
       if [ "$name" = "$kak_bufname" ]; then
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \">$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
+        echo "map global pick-buffers ${buf_id} :buffer-by-index<space>$index<ret> -docstring \">$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \"#$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
+        echo "map global pick-buffers ${buf_id} :buffer-by-index<space>$index<ret> -docstring \"#$(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
       else
-        echo "map global pick-buffers ${keys:$index:1} :buffer-by-index<space>$index<ret> -docstring \" $(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
+        echo "map global pick-buffers ${buf_id} :buffer-by-index<space>$index<ret> -docstring \" $(if [ "$modified" = true ]; then echo "+"; else echo " "; fi) $name\""
       fi
 
       shift
