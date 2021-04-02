@@ -99,14 +99,15 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
         break
       fi
 
+      buf_id=$(echo ${keys} | cut -c${index})
       name=${1%_*}
       modified=${1##*_}
       if [ "$name" = "$kak_bufname" ]; then
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${keys:$index:1} $index "$(docstring $modified '>' "$name")"
+        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${buf_id} $index "$(docstring $modified '>' "$name")"
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${keys:$index:1} $index "$(docstring $modified '#' "$name")"
+        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${buf_id} $index "$(docstring $modified '#' "$name")"
       else
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${keys:$index:1} $index "$(docstring $modified ':' "$name")"
+        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${buf_id} $index "$(docstring $modified ':' "$name")"
       fi
 
       shift
