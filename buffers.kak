@@ -16,7 +16,7 @@ define-command -hidden refresh-buffers-info %{
     set-option -add global buffers_info "%val{bufname}_%val{modified}"
   }
   evaluate-commands %sh{
-    total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ' ' '\n' | wc -l)
+    total=$(eval "set -- $kak_quoted_opt_buffers_info"; echo $#)
     printf "set-option global buffers_total $total"
   }
 }
