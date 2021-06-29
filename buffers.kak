@@ -16,7 +16,7 @@ define-command -hidden refresh-buffers-info %{
     set-option -add global buffers_info "%val{bufname}_%val{modified}"
   }
   evaluate-commands %sh{
-    total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ' ' '\n' | wc -l)
+    total=$(eval "set -- $kak_quoted_opt_buffers_info"; echo $#)
     printf "set-option global buffers_total $total"
   }
 }
@@ -132,7 +132,7 @@ define-command -hidden -params 1 buffer-by-index %{
       index=$((index+1))
       name=${1%_*}
       if [ $index = $target ]; then
-        printf "buffer '$name'"
+        printf '%s\n' "buffer '$name'"
       fi
       shift
     done
@@ -147,7 +147,7 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
       name=${1%_*}
       modified=${1##*_}
       if [ "$modified" = true ]; then
-        printf "buffer '$name'"
+        printf '%s\n' "buffer '$name'"
       fi
       shift
     done
@@ -215,9 +215,7 @@ define-command buffer-only-directory -docstring 'delete all saved buffers except
 }
 
 define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
-  evaluate-commands %sh{
-    printf "edit $kak_config/kakrc"
-  }
+  edit "%val{config}/kakrc"
 }
 
 declare-user-mode buffers
