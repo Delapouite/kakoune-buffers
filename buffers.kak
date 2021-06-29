@@ -132,7 +132,7 @@ define-command -hidden -params 1 buffer-by-index %{
       index=$((index+1))
       name=${1%_*}
       if [ $index = $target ]; then
-        printf "buffer '$name'"
+        printf '%s\n' "buffer '$name'"
       fi
       shift
     done
@@ -147,7 +147,7 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
       name=${1%_*}
       modified=${1##*_}
       if [ "$modified" = true ]; then
-        printf "buffer '$name'"
+        printf '%s\n' "buffer '$name'"
       fi
       shift
     done
