@@ -149,6 +149,7 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
       modified=${1##*_}
       if [ "$modified" = true ] && [ "$kak_bufname" != "$name" ]; then
         printf '%s\n' "buffer '$name'"
+        break
       fi
       shift
     done
