@@ -95,11 +95,12 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
     while [ "$1" ]; do
       # limit lists too big
       index=$((index + 1))
+      keys=${keys#?}
       if [ "$index" -gt "$num_keys" ]; then
         break
       fi
 
-      buf_id=$(echo ${keys} | cut -c${index})
+      buf_id=${keys%"${keys#?}"}
       name=${1%_*}
       modified=${1##*_}
       if [ "$name" = "$kak_bufname" ]; then
