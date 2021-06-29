@@ -215,9 +215,7 @@ define-command buffer-only-directory -docstring 'delete all saved buffers except
 }
 
 define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
-  evaluate-commands %sh{
-    printf "edit $kak_config/kakrc"
-  }
+  edit "%val{config}/kakrc"
 }
 
 declare-user-mode buffers
