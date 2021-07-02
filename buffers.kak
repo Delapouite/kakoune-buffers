@@ -27,7 +27,7 @@ declare-option str current_bufname
 # adjust this number to display more buffers in info
 declare-option int max_list_buffers 42
 
-hook global WinDisplay .* %{
+hook -group kakoune-buffers global WinDisplay .* %{
   set-option global alt_bufname %opt{current_bufname}
   set-option global current_bufname %val{bufname}
 }
