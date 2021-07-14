@@ -16,7 +16,7 @@ define-command -hidden refresh-buffers-info %{
     set-option -add global buffers_info "%val{bufname}_%val{modified}"
   }
   evaluate-commands %sh{
-    total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ' ' '\n' | wc -l)
+    total=$(eval "set -- $kak_quoted_opt_buffers_info"; echo $#)
     printf "set-option global buffers_total $total"
   }
 }
@@ -27,7 +27,7 @@ declare-option str current_bufname
 # adjust this number to display more buffers in info
 declare-option int max_list_buffers 42
 
-hook global WinDisplay .* %{
+hook -group kakoune-buffers global WinDisplay .* %{
   set-option global alt_bufname %opt{current_bufname}
   set-option global current_bufname %val{bufname}
 }
@@ -95,11 +95,12 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
     while [ "$1" ]; do
       # limit lists too big
       index=$((index + 1))
+      keys=${keys#?}
       if [ "$index" -gt "$num_keys" ]; then
         break
       fi
 
-      buf_id=$(echo ${keys} | cut -c${index})
+      buf_id=${keys%"${keys#?}"}
       name=${1%_*}
       modified=${1##*_}
       if [ "$name" = "$kak_bufname" ]; then
@@ -132,7 +133,7 @@ define-command -hidden -params 1 buffer-by-index %{
       index=$((index+1))
       name=${1%_*}
       if [ $index = $target ]; then
-        printf "buffer '$name'"
+        printf '%s\n' "buffer '$name'"
       fi
       shift
     done
@@ -146,8 +147,9 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
     while [ "$1" ]; do
       name=${1%_*}
       modified=${1##*_}
-      if [ "$modified" = true ]; then
-        printf "buffer '$name'"
+      if [ "$modified" = true ] && [ "$kak_bufname" != "$name" ]; then
+        printf '%s\n' "buffer '$name'"
+        break
       fi
       shift
     done
@@ -215,9 +217,7 @@ define-command buffer-only-directory -docstring 'delete all saved buffers except
 }
 
 define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
-  evaluate-commands %sh{
-    printf "edit $kak_config/kakrc"
-  }
+  edit "%val{config}/kakrc"
 }
 
 declare-user-mode buffers
