@@ -32,6 +32,20 @@ hook global WinDisplay .* %{
   set-option global current_bufname %val{bufname}
 }
 
+# A value of 'alt' is recommended, as this is an alias used by multiple filetype rc scripts.
+# NOTE: This is set by default to a command that's expected to fail in order to retain the original plugin behavior.
+# The guid suffix is trying to "guarantee" that it won't accidentally be a command someone might set.
+declare-option str buffer_alternate_command 'nosuchcommand_d1e3a0d4717a4c699eb0c275bbfccd36'
+define-command buffer-alternate -docstring 'open the alternate or previous file in a new buffer' %{
+    try %{
+        # attempt to execute a custom command specified by the `buffer_alternate_command` option
+        evaluate-commands %sh{printf "%s\n" "$kak_opt_buffer_alternate_command"}
+    } catch %{
+        # use 'ga' as the fallback/default behaviour
+        execute-keys ga
+    }
+}
+
 define-command info-buffers -docstring 'populate an info box with a numbered buffers list' %{
   refresh-buffers-info
   evaluate-commands %sh{
@@ -222,7 +236,7 @@ define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
 
 declare-user-mode buffers
 
-map global buffers a 'ga'                             -docstring 'alternate ↔'
+map global buffers a ': buffer-alternate<ret>'        -docstring 'alternate ↔'
 map global buffers b ': info-buffers<ret>'            -docstring 'info'
 map global buffers c ': edit-kakrc<ret>'              -docstring 'config'
 map global buffers d ': delete-buffer<ret>'           -docstring 'delete'

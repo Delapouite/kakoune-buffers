@@ -38,6 +38,13 @@ With `buffer-first-modified`, jump to the first modified buffer.
 To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only-force` version.
 You can also delete all buffers except the ones in the same dir as the current buffer with `buffer-only-directory`.
 
+To use a custom command for switching to the alternate buffer, set the `buffer_alternate_command` option:
+```
+# an 'alt' alias is already set by multiple filetype rc scripts
+set global buffer_alternate_command 'alt'
+```
+If you do not set this option, or if the provided command fails, then `ga` will be used to switch to the alternate buffer.
+
 ## User mode
 
 All these commands are grouped in a dedicated `buffers` user-mode.
