@@ -35,10 +35,12 @@ hook global WinDisplay .* %{
 define-command buffer-alternate -docstring 'open the alternate file in a new buffer' %{
     try %{
         # attempt to execute the `alt` command alias
-        evaluate-commands ': alt<ret>'
+        alt
     } catch %{
         # use 'ga' as the fallback/default behavior
         execute-keys ga
+    } catch %{
+        fail 'no alternate file or buffer available'
     }
 }
 
