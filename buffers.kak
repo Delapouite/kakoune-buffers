@@ -32,16 +32,12 @@ hook global WinDisplay .* %{
   set-option global current_bufname %val{bufname}
 }
 
-# A value of 'alt' is recommended, as this is an alias used by multiple filetype rc scripts.
-# NOTE: This is set by default to a command that's expected to fail in order to retain the original plugin behavior.
-# The guid suffix is trying to "guarantee" that it won't accidentally be a command someone might set.
-declare-option str buffer_alternate_command 'nosuchcommand_d1e3a0d4717a4c699eb0c275bbfccd36'
-define-command buffer-alternate -docstring 'open the alternate or previous file in a new buffer' %{
+define-command buffer-alternate -docstring 'open the alternate file in a new buffer' %{
     try %{
-        # attempt to execute a custom command specified by the `buffer_alternate_command` option
-        evaluate-commands %sh{printf "%s\n" "$kak_opt_buffer_alternate_command"}
+        # attempt to execute the `alt` command alias
+        evaluate-commands ': alt<ret>'
     } catch %{
-        # use 'ga' as the fallback/default behaviour
+        # use 'ga' as the fallback/default behavior
         execute-keys ga
     }
 }
