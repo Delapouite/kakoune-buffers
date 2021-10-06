@@ -37,6 +37,7 @@ With `buffer-first-modified`, jump to the first modified buffer.
 
 To delete all buffers except the current one, use `buffer-only` or the more destructive `buffer-only-force` version.
 You can also delete all buffers except the ones in the same dir as the current buffer with `buffer-only-directory`.
+
 ## User mode
 
 All these commands are grouped in a dedicated `buffers` user-mode.
