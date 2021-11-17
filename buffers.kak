@@ -32,6 +32,18 @@ hook global WinDisplay .* %{
   set-option global current_bufname %val{bufname}
 }
 
+define-command buffer-alternate -docstring 'open the alternate file in a new buffer' %{
+    try %{
+        # attempt to execute the `alt` command alias
+        alt
+    } catch %{
+        # use 'ga' as the fallback/default behavior
+        execute-keys ga
+    } catch %{
+        fail 'no alternate file or buffer available'
+    }
+}
+
 define-command info-buffers -docstring 'populate an info box with a numbered buffers list' %{
   refresh-buffers-info
   evaluate-commands %sh{
@@ -222,7 +234,7 @@ define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
 
 declare-user-mode buffers
 
-map global buffers a 'ga'                             -docstring 'alternate ↔'
+map global buffers a ': buffer-alternate<ret>'        -docstring 'alternate ↔'
 map global buffers b ': info-buffers<ret>'            -docstring 'info'
 map global buffers c ': edit-kakrc<ret>'              -docstring 'config'
 map global buffers d ': delete-buffer<ret>'           -docstring 'delete'
