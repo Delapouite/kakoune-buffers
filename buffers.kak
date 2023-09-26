@@ -1,6 +1,6 @@
 # buflist++: names AND modified bool
 # debug buffers (like *debug*, *lint*…) are excluded
-declare-option -hidden str-list buffers_info
+declare-option -hidden str-to-str-map buffers_info
 
 declare-option int buffers_total
 
@@ -13,7 +13,7 @@ define-command -hidden refresh-buffers-info %{
   set-option global buffers_total 0
   # iteration over all buffers (except debug ones)
   evaluate-commands -no-hooks -buffer * %{
-    set-option -add global buffers_info "%val{bufname}_%val{modified}"
+    set-option -add global buffers_info "%val{bufname}=%val{modified}"
   }
   evaluate-commands %sh{
     total=$(printf '%s\n' "$kak_opt_buffers_info" | tr ' ' '\n' | wc -l)
@@ -48,7 +48,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
         break
       fi
 
-      name=${1%_*}
+      name=${1%=*}
       if [ "$name" = "$kak_bufname" ]; then
         printf '>'
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
@@ -57,7 +57,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
         printf ' '
       fi
 
-      modified=${1##*_}
+      modified=${1##*=}
       if [ "$modified" = true ]; then
         printf '+ '
       else
@@ -72,7 +72,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
 
       shift
     done
-    printf ^\\n
+    printf '^\n'
   }
 }
 
@@ -89,25 +89,23 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
       fi
     }
     index=0
-    keys=" $kak_opt_buffer_keys"
-    num_keys=${#kak_opt_buffer_keys}
     eval "set -- $kak_quoted_opt_buffers_info"
     while [ "$1" ]; do
       # limit lists too big
       index=$((index + 1))
-      if [ "$index" -gt "$num_keys" ]; then
+      if [ $index -gt ${#kak_opt_buffer_keys} ]; then
         break
       fi
 
-      buf_id=$(echo ${keys} | cut -c${index})
-      name=${1%_*}
-      modified=${1##*_}
+      key=$(echo ${kak_opt_buffer_keys} | cut -c${index})
+      name=${1%=*}
+      modified=${1##*=}
       if [ "$name" = "$kak_bufname" ]; then
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${buf_id} $index "$(docstring $modified '>' "$name")"
+        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified '>' "$name")"
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${buf_id} $index "$(docstring $modified '#' "$name")"
+        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified '#' "$name")"
       else
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" ${buf_id} $index "$(docstring $modified ':' "$name")"
+        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified ':' "$name")"
       fi
 
       shift
@@ -130,9 +128,9 @@ define-command -hidden -params 1 buffer-by-index %{
     eval "set -- $kak_quoted_opt_buffers_info"
     while [ "$1" ]; do
       index=$((index+1))
-      name=${1%_*}
+      name=${1%=*}
       if [ $index = $target ]; then
-        printf "buffer '$name'"
+        printf "buffer '%s'\n" "$name"
       fi
       shift
     done
@@ -144,10 +142,10 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
   evaluate-commands %sh{
     eval "set -- $kak_quoted_opt_buffers_info"
     while [ "$1" ]; do
-      name=${1%_*}
-      modified=${1##*_}
+      name=${1%=*}
+      modified=${1##*=}
       if [ "$modified" = true ]; then
-        printf "buffer '$name'"
+        printf "buffer '%s'\n" "$name"
       fi
       shift
     done
