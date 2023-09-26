@@ -155,50 +155,47 @@ define-command delete-buffers -docstring 'delete all saved buffers' %{
 }
 
 define-command buffer-only -docstring 'delete all saved buffers except current one' %{
+  set-option global buffers_total 0
   evaluate-commands %sh{
-    deleted=0
     eval "set -- $kak_quoted_buflist"
     while [ $# -gt 0 ]; do
       if [ "$1" != "$kak_bufname" ]; then
-        echo "try %{delete-buffer '$1'}"
-        echo "echo -markup '{Information}$deleted buffers deleted'"
-        deleted=$((deleted+1))
+        printf "try %%{delete-buffer '%s';set-option -add global buffers_total 1}\n" "$1"
       fi
       shift
     done
   }
+  echo -markup "{Information}%opt{buffers_total} buffers deleted"
 }
 
 define-command buffer-only-force -docstring 'delete all buffers except current one' %{
+  set-option global buffers_total 0
   evaluate-commands %sh{
-    deleted=0
     eval "set -- $kak_quoted_buflist"
     while [ $# -gt 0 ]; do
       if [ "$1" != "$kak_bufname" ]; then
-        echo "delete-buffer! '$1'"
-        echo "echo -markup '{Information}$deleted buffers deleted'"
-        deleted=$((deleted+1))
+        printf "delete-buffer! '%s';set-option -add global buffers_total 1\n" "$1"
       fi
       shift
     done
   }
+  echo -markup "{Information}%opt{buffers_total} buffers deleted"
 }
 
 define-command buffer-only-directory -docstring 'delete all saved buffers except the ones in the same current buffer directory' %{
+  set-option global buffers_total 0
   evaluate-commands %sh{
-    deleted=0
     current_buffer_dir=$(dirname "$kak_bufname")
     eval "set -- $kak_quoted_buflist"
     while [ $# -gt 0 ]; do
       dir=$(dirname "$1")
-      if [ $dir != "$current_buffer_dir" ]; then
-        echo "try %{delete-buffer '$1'}"
-        echo "echo -markup '{Information}$deleted buffers deleted'"
-        deleted=$((deleted+1))
+      if [ "$dir" != "$current_buffer_dir" ]; then
+        printf "try %%{delete-buffer '%s';set-option -add global buffers_total 1}\n" "$1"
       fi
       shift
     done
   }
+  echo -markup "{Information}%opt{buffers_total} buffers deleted"
 }
 
 define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
