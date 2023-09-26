@@ -143,7 +143,7 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
   }
 }
 
-define-command delete-buffers -docstring 'delete all saved buffers' %{
+define-command delete-buffers -docstring 'delete all non-modified buffers' %{
   set-option global buffers_total 0
   evaluate-commands -no-hooks -buffer * %{
     try %{
@@ -154,7 +154,7 @@ define-command delete-buffers -docstring 'delete all saved buffers' %{
   echo -markup "{Information}%opt{buffers_total} buffers deleted"
 }
 
-define-command buffer-only -docstring 'delete all saved buffers except current one' %{
+define-command buffer-only -docstring 'delete all non-modified buffers except current one' %{
   set-option global buffers_total 0
   evaluate-commands %sh{
     eval "set -- $kak_quoted_buflist"
@@ -182,7 +182,7 @@ define-command buffer-only-force -docstring 'delete all buffers except current o
   echo -markup "{Information}%opt{buffers_total} buffers deleted"
 }
 
-define-command buffer-only-directory -docstring 'delete all saved buffers except the ones in the same current buffer directory' %{
+define-command buffer-only-directory -docstring 'delete all non-modified buffers except the ones in the same current buffer directory' %{
   set-option global buffers_total 0
   evaluate-commands %sh{
     current_buffer_dir=$(dirname "$kak_bufname")
