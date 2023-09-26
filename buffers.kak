@@ -58,7 +58,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
       fi
 
       modified=${1##*=}
-      if [ "$modified" = true ]; then
+      if $modified; then
         printf '+ %.2d - %s\n' "$index" "$name"
       else
         printf '  %.2d - %s\n' "$index" "$name"
@@ -76,7 +76,7 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
   unmap global pick-buffers
   evaluate-commands %sh{
     docstring() {
-      if [ "$1" = true ]; then
+      if $1; then
         printf "%s+ %s" "$2" "$3"
       else
         printf "%s  %s" "$2" "$3"
@@ -138,7 +138,7 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
     while [ "$1" ]; do
       name=${1%=*}
       modified=${1##*=}
-      if [ "$modified" = true ]; then
+      if $modified; then
         printf "buffer '%s'\n" "$name"
       fi
       shift
