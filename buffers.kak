@@ -1,5 +1,5 @@
 # buflist++: names AND modified bool
-# debug buffers (like *debug*, *lint*…) are excluded
+# debug buffer is not included
 declare-option -hidden str-to-str-map buffers_info
 
 declare-option -hidden int buffers_total
@@ -11,7 +11,7 @@ declare-option -hidden str buffer_keys "1234567890qwertyuiopasdfghjklzxcvbnm"
 define-command -hidden refresh-buffers-info %{
   set-option global buffers_info
   set-option global buffers_total 0
-  # iteration over all buffers (except debug ones)
+  # iteration over all except *debug*
   evaluate-commands -no-hooks -buffer * %{
     set-option -add global buffers_info "%val{bufname}=%val{modified}"
     set-option -add global buffers_total 1
