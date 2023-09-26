@@ -159,7 +159,7 @@ define-command buffer-only -docstring 'delete all non-modified buffers except cu
   evaluate-commands %sh{
     eval "set -- $kak_quoted_buflist"
     while [ $# -gt 0 ]; do
-      if [ "$1" != "$kak_bufname" ]; then
+      if [ "$1" != '*debug*' -a "$1" != "$kak_bufname" ]; then
         printf "try %%{delete-buffer '%s';set-option -add global buffers_total 1}\n" "$1"
       fi
       shift
@@ -173,7 +173,7 @@ define-command buffer-only-force -docstring 'delete all buffers except current o
   evaluate-commands %sh{
     eval "set -- $kak_quoted_buflist"
     while [ $# -gt 0 ]; do
-      if [ "$1" != "$kak_bufname" ]; then
+      if [ "$1" != '*debug*' -a "$1" != "$kak_bufname" ]; then
         printf "delete-buffer! '%s';set-option -add global buffers_total 1\n" "$1"
       fi
       shift
@@ -189,7 +189,7 @@ define-command buffer-only-directory -docstring 'delete all non-modified buffers
     eval "set -- $kak_quoted_buflist"
     while [ $# -gt 0 ]; do
       dir=$(dirname "$1")
-      if [ "$dir" != "$current_buffer_dir" ]; then
+      if [ "$1" != '*debug*' -a "$dir" != "$current_buffer_dir" ]; then
         printf "try %%{delete-buffer '%s';set-option -add global buffers_total 1}\n" "$1"
       fi
       shift
