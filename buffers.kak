@@ -2,10 +2,10 @@
 # debug buffers (like *debug*, *lint*…) are excluded
 declare-option -hidden str-to-str-map buffers_info
 
-declare-option int buffers_total
+declare-option -hidden int buffers_total
 
 # keys to use for buffer picking
-declare-option str buffer_keys "1234567890qwertyuiopasdfghjklzxcvbnm"
+declare-option -hidden str buffer_keys "1234567890qwertyuiopasdfghjklzxcvbnm"
 
 # used to handle [+] (modified) symbol in list
 define-command -hidden refresh-buffers-info %{
