@@ -144,16 +144,14 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
 }
 
 define-command delete-buffers -docstring 'delete all saved buffers' %{
-  evaluate-commands %sh{
-    deleted=0
-    eval "set -- $kak_quoted_buflist"
-    while [ $# -gt 0 ]; do
-      echo "try %{delete-buffer '$1'}"
-      echo "echo -markup '{Information}$deleted buffers deleted'"
-      deleted=$((deleted+1))
-      shift
-    done
+  set-option global buffers_total 0
+  evaluate-commands -no-hooks -buffer * %{
+    try %{
+        delete-buffer
+        set-option -add global buffers_total 1
+    }
   }
+  echo -markup "{Information}%opt{buffers_total} buffers deleted"
 }
 
 define-command buffer-only -docstring 'delete all saved buffers except current one' %{
