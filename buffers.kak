@@ -40,7 +40,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
 
     index=0
     eval "set -- $kak_quoted_opt_buffers_info"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       # limit lists too big
       index=$((index + 1))
       if [ "$index" -gt "$kak_opt_max_list_buffers" ]; then
@@ -84,7 +84,7 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
     }
     index=0
     eval "set -- $kak_quoted_opt_buffers_info"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       # limit lists too big
       index=$((index + 1))
       if [ $index -gt ${#kak_opt_buffer_keys} ]; then
@@ -120,7 +120,7 @@ define-command -hidden -params 1 buffer-by-index %{
     target=$1
     index=0
     eval "set -- $kak_quoted_opt_buffers_info"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       index=$((index+1))
       name=${1%=*}
       if [ $index = $target ]; then
@@ -135,7 +135,7 @@ define-command buffer-first-modified -docstring 'move to the first modified buff
   refresh-buffers-info
   evaluate-commands %sh{
     eval "set -- $kak_quoted_opt_buffers_info"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       name=${1%=*}
       modified=${1##*=}
       if $modified; then
@@ -150,7 +150,7 @@ define-command delete-buffers -docstring 'delete all saved buffers' %{
   evaluate-commands %sh{
     deleted=0
     eval "set -- $kak_quoted_buflist"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       echo "try %{delete-buffer '$1'}"
       echo "echo -markup '{Information}$deleted buffers deleted'"
       deleted=$((deleted+1))
@@ -163,7 +163,7 @@ define-command buffer-only -docstring 'delete all saved buffers except current o
   evaluate-commands %sh{
     deleted=0
     eval "set -- $kak_quoted_buflist"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       if [ "$1" != "$kak_bufname" ]; then
         echo "try %{delete-buffer '$1'}"
         echo "echo -markup '{Information}$deleted buffers deleted'"
@@ -178,7 +178,7 @@ define-command buffer-only-force -docstring 'delete all buffers except current o
   evaluate-commands %sh{
     deleted=0
     eval "set -- $kak_quoted_buflist"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       if [ "$1" != "$kak_bufname" ]; then
         echo "delete-buffer! '$1'"
         echo "echo -markup '{Information}$deleted buffers deleted'"
@@ -194,7 +194,7 @@ define-command buffer-only-directory -docstring 'delete all saved buffers except
     deleted=0
     current_buffer_dir=$(dirname "$kak_bufname")
     eval "set -- $kak_quoted_buflist"
-    while [ "$1" ]; do
+    while [ $# -gt 0 ]; do
       dir=$(dirname "$1")
       if [ $dir != "$current_buffer_dir" ]; then
         echo "try %{delete-buffer '$1'}"
