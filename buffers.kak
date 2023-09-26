@@ -105,14 +105,17 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
   enter-user-mode pick-buffers
 }
 
-define-command buffer-first -docstring 'move to the first buffer in the list' 'buffer-by-index 1'
+define-command buffer-first -docstring 'move to the first buffer in the list' %{
+  refresh-buffers-info
+  buffer-by-index 1
+}
 
 define-command buffer-last -docstring 'move to the last buffer in the list' %{
+  refresh-buffers-info
   buffer-by-index %opt{buffers_total}
 }
 
 define-command -hidden -params 1 buffer-by-index %{
-  refresh-buffers-info
   evaluate-commands %sh{
     target=$1
     index=0
@@ -228,6 +231,7 @@ define-command -hidden enter-buffers-mode %{
     if [ "$kak_count" -eq 0 ]; then
       printf 'enter-user-mode buffers'
     else
+      refresh-buffers-info
       printf "buffer-by-index $kak_count"
     fi
   }
