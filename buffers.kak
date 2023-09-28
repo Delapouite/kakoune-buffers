@@ -36,7 +36,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
     printf "info -title '$kak_opt_buffers_total buffers' -- %%^"
 
     index=0
-    eval "set -- $kak_quoted_opt_buffers_info"
+    eval set -- "$kak_quoted_opt_buffers_info"
     while [ $# -gt 0 ]; do
       # limit lists too big
       index=$((index + 1))
@@ -80,7 +80,7 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
       fi
     }
     index=0
-    eval "set -- $kak_quoted_opt_buffers_info"
+    eval set -- "$kak_quoted_opt_buffers_info"
     while [ $# -gt 0 ]; do
       # limit lists too big
       index=$((index + 1))
@@ -119,7 +119,7 @@ define-command -hidden -params 1 buffer-by-index %{
   evaluate-commands %sh{
     target=$1
     index=0
-    eval "set -- $kak_quoted_opt_buffers_info"
+    eval set -- "$kak_quoted_opt_buffers_info"
     while [ $# -gt 0 ]; do
       index=$((index+1))
       name=${1%=*}
@@ -134,7 +134,7 @@ define-command -hidden -params 1 buffer-by-index %{
 define-command buffer-first-modified -docstring 'move to the first modified buffer in the list' %{
   refresh-buffers-info
   evaluate-commands %sh{
-    eval "set -- $kak_quoted_opt_buffers_info"
+    eval set -- "$kak_quoted_opt_buffers_info"
     while [ $# -gt 0 ]; do
       name=${1%=*}
       modified=${1##*=}
@@ -160,7 +160,7 @@ define-command delete-buffers -docstring 'delete all non-modified buffers' %{
 define-command buffer-only -docstring 'delete all non-modified buffers except current one' %{
   set-option global buffers_total 0
   evaluate-commands %sh{
-    eval "set -- $kak_quoted_buflist"
+    eval set -- "$kak_quoted_buflist"
     while [ $# -gt 0 ]; do
       if [ "$1" != '*debug*' -a "$1" != "$kak_bufname" ]; then
         printf "try %%{delete-buffer '%s';set-option -add global buffers_total 1}\n" "$1"
@@ -174,7 +174,7 @@ define-command buffer-only -docstring 'delete all non-modified buffers except cu
 define-command buffer-only-force -docstring 'delete all buffers except current one' %{
   set-option global buffers_total 0
   evaluate-commands %sh{
-    eval "set -- $kak_quoted_buflist"
+    eval set -- "$kak_quoted_buflist"
     while [ $# -gt 0 ]; do
       if [ "$1" != '*debug*' -a "$1" != "$kak_bufname" ]; then
         printf "delete-buffer! '%s';set-option -add global buffers_total 1\n" "$1"
@@ -189,7 +189,7 @@ define-command buffer-only-directory -docstring 'delete all non-modified buffers
   set-option global buffers_total 0
   evaluate-commands %sh{
     current_buffer_dir=$(dirname "$kak_bufname")
-    eval "set -- $kak_quoted_buflist"
+    eval set -- "$kak_quoted_buflist"
     while [ $# -gt 0 ]; do
       dir=$(dirname "$1")
       if [ "$1" != '*debug*' -a "$dir" != "$current_buffer_dir" ]; then
