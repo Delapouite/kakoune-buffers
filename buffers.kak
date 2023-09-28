@@ -40,7 +40,7 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
     while [ $# -gt 0 ]; do
       # limit lists too big
       index=$((index + 1))
-      if [ "$index" -gt "$kak_opt_max_list_buffers" ]; then
+      if [ $index -gt $kak_opt_max_list_buffers ]; then
         printf '  …'
         break
       fi
@@ -56,9 +56,9 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
 
       modified=${1##*=}
       if $modified; then
-        printf '+ %.2d - %s\n' "$index" "$name"
+        printf '+ %.2d - %s\n' $index "$name"
       else
-        printf '  %.2d - %s\n' "$index" "$name"
+        printf '  %.2d - %s\n' $index "$name"
       fi
 
       shift
@@ -228,7 +228,7 @@ map global buffers u ': buffer *debug*<ret>'          -docstring '*debug*'
 # trick to access count, 3b → display third buffer
 define-command -hidden enter-buffers-mode %{
   evaluate-commands %sh{
-    if [ "$kak_count" -eq 0 ]; then
+    if [ $kak_count -eq 0 ]; then
       printf 'enter-user-mode buffers'
     else
       refresh-buffers-info
