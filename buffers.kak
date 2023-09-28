@@ -59,15 +59,9 @@ define-command info-buffers -docstring 'populate an info box with a numbered buf
 
       modified=${1##*=}
       if [ "$modified" = true ]; then
-        printf '+ '
+        printf '+ %.2d - %s\n' "$index" "$name"
       else
-        printf '  '
-      fi
-
-      if [ "$index" -lt 10 ]; then
-        echo "0$index - $name"
-      else
-        echo "$index - $name"
+        printf '  %.2d - %s\n' "$index" "$name"
       fi
 
       shift
