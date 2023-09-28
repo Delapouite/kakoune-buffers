@@ -92,11 +92,11 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
       name=${1%=*}
       modified=${1##*=}
       if [ "$name" = "$kak_bufname" ]; then
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified '>' "$name")"
+        printf "map global pick-buffers %s ':buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified '>' "$name")"
       elif [ "$name" = "$kak_opt_alt_bufname" ]; then
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified '#' "$name")"
+        printf "map global pick-buffers %s ':buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified '#' "$name")"
       else
-        printf "map global pick-buffers %s ': buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified ':' "$name")"
+        printf "map global pick-buffers %s ':buffer-by-index %s<ret>' -docstring '%s'\n" $key $index "$(docstring $modified ':' "$name")"
       fi
 
       shift
@@ -209,21 +209,21 @@ define-command edit-kakrc -docstring 'open kakrc in a new buffer' %{
 
 declare-user-mode buffers
 
-map global buffers a 'ga'                             -docstring 'alternate ↔'
-map global buffers b ': info-buffers<ret>'            -docstring 'info'
-map global buffers c ': edit-kakrc<ret>'              -docstring 'config'
-map global buffers d ': delete-buffer<ret>'           -docstring 'delete'
-map global buffers D ': delete-buffers<ret>'          -docstring 'delete all'
-map global buffers f ': buffer<space>'                -docstring 'find'
-map global buffers h ': buffer-first<ret>'            -docstring 'first ⇐'
-map global buffers l ': buffer-last<ret>'             -docstring 'last ⇒'
-map global buffers m ': buffer-first-modified<ret>'   -docstring 'modified'
-map global buffers n ': buffer-next<ret>'             -docstring 'next →'
-map global buffers o ': buffer-only<ret>'             -docstring 'only'
-map global buffers p ': buffer-previous<ret>'         -docstring 'previous ←'
-map global buffers r ': rename-buffer '               -docstring 'rename'
-map global buffers s ': edit -scratch *scratch*<ret>' -docstring '*scratch*'
-map global buffers u ': buffer *debug*<ret>'          -docstring '*debug*'
+map global buffers a 'ga'                            -docstring 'alternate ↔'
+map global buffers b ':info-buffers<ret>'            -docstring 'info'
+map global buffers c ':edit-kakrc<ret>'              -docstring 'config'
+map global buffers d ':delete-buffer<ret>'           -docstring 'delete'
+map global buffers D ':delete-buffers<ret>'          -docstring 'delete all'
+map global buffers f ':buffer<space>'                -docstring 'find'
+map global buffers h ':buffer-first<ret>'            -docstring 'first ⇐'
+map global buffers l ':buffer-last<ret>'             -docstring 'last ⇒'
+map global buffers m ':buffer-first-modified<ret>'   -docstring 'modified'
+map global buffers n ':buffer-next<ret>'             -docstring 'next →'
+map global buffers o ':buffer-only<ret>'             -docstring 'only'
+map global buffers p ':buffer-previous<ret>'         -docstring 'previous ←'
+map global buffers r ':rename-buffer '               -docstring 'rename'
+map global buffers s ':edit -scratch *scratch*<ret>' -docstring '*scratch*'
+map global buffers u ':buffer *debug*<ret>'          -docstring '*debug*'
 
 # trick to access count, 3b → display third buffer
 define-command -hidden enter-buffers-mode %{
