@@ -88,7 +88,7 @@ define-command pick-buffers -docstring 'enter buffer pick mode' %{
         break
       fi
 
-      key=$(echo ${kak_opt_buffer_keys} | cut -c${index})
+      key=$(echo "$kak_opt_buffer_keys" | cut -c$index)
       name=${1%=*}
       modified=${1##*=}
       if [ "$name" = "$kak_bufname" ]; then
